@@ -59,9 +59,48 @@ class GradeCalculator:
         return GradeCalculator.calculate_course_percentage(optimistic_grades, weights)
 
     @staticmethod
-    def calculate_min_average_for_A(grades:Grades, weights:GradeWeights) -> float:
+    def calculate_min_average_for_A(grades:Grades, weights:GradeWeights, desiredPercentage:float) -> float:
+        '''
+        Calculates the minimum average points for all yet ungraded
+        assignments to still get an A in class.
+        '''
+        # calculate current points
+        currPts = 0
+        # collect weights of assignments not yet 
+        weightOfIncompleteGrades = 0
+
+        if grades.quiz_1 is not None:
+            currPts = currPts + (grades.quiz_1 * weights.quizzes)
+        else: 
+            weightOfIncompleteGrades = weightOfIncompleteGrades + weights.quizzes
         
-        return 0 
+        if grades.quiz_2 is not None:
+            currPts = currPts + (grades.quiz_2 * weights.quizzes)
+        else: 
+            weightOfIncompleteGrades = weightOfIncompleteGrades + weights.quizzes
+
+        if grades.midterm is not None:
+            currPts = currPts + (grades.midterm * weights.midterm)
+        else: 
+            weightOfIncompleteGrades = weightOfIncompleteGrades + weights.midterm
+        
+        if grades.project is not None:
+            currPts = currPts + (grades.project * weights.project)
+        else: 
+            weightOfIncompleteGrades = weightOfIncompleteGrades + weights.project
+
+        if grades.final is not None:
+            currPts = currPts + (grades.final * weights.final)
+        else: 
+            weightOfIncompleteGrades = weightOfIncompleteGrades + weights.final
+
+        # calculate points still needed for A 
+        ptsNeeded = desiredPercentage - currPts
+
+        # calculate average of remaining assignments with remaing weights
+        avgForA = ptsNeeded / weightOfIncompleteGrades
+
+        return avgForA
 
     @staticmethod
     def calculate_letter_grade(percentage_grade:float) -> str:
